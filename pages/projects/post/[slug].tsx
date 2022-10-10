@@ -1,6 +1,6 @@
-import { GetStaticPaths, GetStaticProps } from 'next'
-import Head from 'next/head'
-import { useContext } from 'react'
+import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
+import { useContext } from 'react';
 import {
   cleanPage,
   fetchPage,
@@ -8,22 +8,22 @@ import {
   PageViewer,
   ReactBricksContext,
   types,
-} from 'react-bricks/frontend'
-import ErrorNoKeys from '../../../components/errorNoKeys'
-import ErrorNoPage from '../../../components/errorNoPage'
-import Layout from '../../../components/layout'
-import config from '../../../react-bricks/config'
+} from 'react-bricks/frontend';
+import ErrorNoKeys from '../../../components/errorNoKeys';
+import ErrorNoPage from '../../../components/errorNoPage';
+import Layout from '../../../components/layout';
+import config from '../../../react-bricks/config';
 
 interface PageProps {
-  page: types.Page
-  error: string
+  page: types.Page;
+  error: string;
 }
 
 const Page: React.FC<PageProps> = ({ page, error }) => {
   // Clean the received content
   // Removes unknown or not allowed bricks
-  const { pageTypes, bricks } = useContext(ReactBricksContext)
-  const pageOk = page ? cleanPage(page, pageTypes, bricks) : null
+  const { pageTypes, bricks } = useContext(ReactBricksContext);
+  const pageOk = page ? cleanPage(page, pageTypes, bricks) : null;
 
   return (
     <Layout>
@@ -39,45 +39,51 @@ const Page: React.FC<PageProps> = ({ page, error }) => {
       {error === 'NOKEYS' && <ErrorNoKeys />}
       {error === 'NOPAGE' && <ErrorNoPage />}
     </Layout>
-  )
-}
+  );
+};
 
 export const getStaticProps: GetStaticProps = async (context) => {
   if (!config.apiKey) {
-    return { props: { error: 'NOKEYS' } }
+    return { props: { error: 'NOKEYS' } };
   }
-  const { slug } = context.params
+  const { slug } = context.params;
   try {
-    const page = await fetchPage(slug.toString(), config.apiKey, context.locale)
-    return { props: { page } }
+    const page = await fetchPage(
+      slug.toString(),
+      config.apiKey,
+      context.locale
+    );
+    return { props: { page } };
   } catch {
-    return { props: { error: 'NOPAGE' } }
+    return { props: { error: 'NOPAGE' } };
   }
-}
+};
 
 export const getStaticPaths: GetStaticPaths = async (context) => {
   if (!config.apiKey) {
-    return { paths: [], fallback: false }
+    return { paths: [], fallback: false };
   }
 
   const allPages = await fetchPages(config.apiKey, {
-    type: 'blog',
+    type: 'project',
     pageSize: 1000,
     sort: '-publishedAt',
-  })
+  });
 
   const paths = allPages
     .map((page) =>
       page.translations
-        .filter((translation) => context.locales.indexOf(translation.language) > -1)
+        .filter(
+          (translation) => context.locales.indexOf(translation.language) > -1
+        )
         .map((translation) => ({
           params: { slug: translation.slug },
           locale: translation.language,
         }))
     )
-    .flat()
+    .flat();
 
-  return { paths, fallback: false }
-}
+  return { paths, fallback: false };
+};
 
-export default Page
+export default Page;

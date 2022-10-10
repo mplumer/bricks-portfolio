@@ -1,4 +1,4 @@
-import { types } from 'react-bricks/frontend'
+import { types } from 'react-bricks/frontend';
 
 const pageTypes: types.IPageType[] = [
   {
@@ -19,14 +19,14 @@ const pageTypes: types.IPageType[] = [
     ],
   },
   {
-    name: 'blog',
-    pluralName: 'Blog',
+    name: 'project',
+    pluralName: 'Projects',
     defaultLocked: false,
     defaultStatus: types.PageStatus.Published,
     getDefaultContent: () => [],
     allowedBlockTypes: [
       'title',
-      'paragraph',
+      'description',
       'quote',
       'video',
       'code-block',
@@ -35,6 +35,6 @@ const pageTypes: types.IPageType[] = [
       'image',
     ],
   },
-]
+];
 
-export default pageTypes
+export default pageTypes;
